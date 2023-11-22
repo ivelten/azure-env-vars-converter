@@ -7,11 +7,12 @@ author:             Ismael Carlos Velten
 maintainer:         ismaelcarlosvelten@gmail.com
 build-type:         Simple
 
-common warnings
+common settings
     ghc-options: -Wall
+    default-extensions: OverloadedStrings, DeriveGeneric
 
 executable azure-env-vars-converter
-    import:           warnings
+    import:           settings
     main-is:          Main.hs
     build-depends:    base ^>=4.17.2.0, aeson, aeson-casing, containers, bytestring
     hs-source-dirs:   src

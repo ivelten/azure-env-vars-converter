@@ -1,13 +1,11 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE OverloadedStrings #-}
+module Main (main) where
 
-module Main where
+import Prelude hiding (readFile, writeFile)
 import GHC.Generics
 import Data.Aeson
 import Data.Aeson.Casing
 import Data.Map as Map hiding (foldr)
 import Data.ByteString.Lazy.Char8 hiding (foldr, putStrLn)
-import Prelude hiding (readFile, writeFile)
 
 data AzureConfig = AzureConfig { name  :: String
                                , value :: String
@@ -24,19 +22,25 @@ data LocalSettings = LocalSettings { isEncrypted :: Bool
 instance ToJSON LocalSettings where
   toJSON = genericToJSON $ aesonDrop 0 pascalCase
 
-importSetting :: AzureConfig -> Map String String -> Map String String
-importSetting cfg = Map.insert (name cfg) (value cfg)
+addConfigToMap :: AzureConfig -> Map String String -> Map String String
+addConfigToMap cfg = Map.insert (name cfg) (value cfg)
+
+convertConfigsToMap :: [AzureConfig] -> Map String String
+convertConfigsToMap = foldr addConfigToMap Map.empty
 
 convertSettings :: [AzureConfig] -> LocalSettings
 convertSettings cfgs =
   LocalSettings { isEncrypted = False
-                , values      = foldr importSetting Map.empty cfgs }
+                , values      = convertConfigsToMap cfgs }
+
+decodeConfigs :: ByteString -> Either String [AzureConfig]
+decodeConfigs = eitherDecode
 
 main :: IO ()
 main = do
   putStrLn "Reading input file."
-  input <- readFile "input.json"
-  let azureConfig = eitherDecode input :: Either String [AzureConfig]
+  inputBytes <- readFile "input.json"
+  let azureConfig = decodeConfigs inputBytes
   let localSettings = case azureConfig of
         Left err   -> error err
         Right cfgs -> convertSettings cfgs
