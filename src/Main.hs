@@ -8,7 +8,6 @@ import Data.Aeson.Casing
 import Data.Map as Map hiding (foldr)
 import Data.ByteString.Lazy.Char8 hiding (foldr, putStrLn)
 import Prelude hiding (readFile, writeFile)
-import System.IO hiding (readFile, writeFile)
 
 data AzureConfig = AzureConfig { name  :: String
                                , value :: String
@@ -35,8 +34,6 @@ convertSettings cfgs =
 
 main :: IO ()
 main = do
-  hSetBuffering stdout NoBuffering
-  hSetBuffering stdin NoBuffering
   putStrLn "Reading input file."
   input <- readFile "input.json"
   let azureConfig = eitherDecode input :: Either String [AzureConfig]
