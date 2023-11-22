@@ -1,0 +1,18 @@
+cabal-version:      3.0
+name:               azure-env-vars-converter
+version:            0.1.0.0
+license:            MIT
+license-file:       LICENSE
+author:             Ismael Carlos Velten
+maintainer:         ismaelcarlosvelten@gmail.com
+build-type:         Simple
+
+common warnings
+    ghc-options: -Wall
+
+executable azure-env-vars-converter
+    import:           warnings
+    main-is:          Main.hs
+    build-depends:    base ^>=4.17.2.0, aeson, aeson-casing, containers, bytestring
+    hs-source-dirs:   src
+    default-language: Haskell2010
